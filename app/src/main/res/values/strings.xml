@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">MyGlammMicro</string>
+    <string name="permission_not_granted_message">You have not granted required permissions. Application may not behave as expected.</string>
+    <string name="search_hint_text">Search restaurants.</string>
+    <string name="hungry_text">HUNGRY?</string>
+    <string name="loading_text">loading...</string>
+    <string name="no_internet">Please re-connect to the internet to proceed</string>
+    <string name="api_failed_error">Oops! Something went wrong. Please try again after some time</string>
+    <string name="unknown_location">unknown location</string>
+</resources>
