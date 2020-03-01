@@ -2,9 +2,11 @@ package com.myglammmicro.ui;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -15,6 +17,9 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -62,6 +67,10 @@ public class Splash extends AppCompatActivity implements GoogleApiClient.Connect
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         try{
+            if(!CommonMethods.isNetworkAvailable(Splash.this)){
+                showCustomDialog(getString(R.string.no_internet),true);
+                return;
+            }
             googleApiClient = getInstance();
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -273,6 +282,48 @@ public class Splash extends AppCompatActivity implements GoogleApiClient.Connect
 
         }catch (Exception ex){
             Log.e(TAG,ex.getMessage());
+        }
+    }
+    private AlertDialog customDialog;
+
+    private void showCustomDialog(String message, final boolean closeApp) {
+        final TextView title, confirmation;
+
+        try {
+            if (customDialog != null && customDialog.isShowing()) {
+                return;
+            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyAlertDialogStyle);
+            LayoutInflater inflater = this.getLayoutInflater();
+            final View dialogView = inflater.inflate(R.layout.general_message_dialog, null);
+            builder.setView(dialogView);
+            title = (TextView) dialogView.findViewById(R.id.message);
+            title.setText(message);
+            CommonMethods.setFontMedium(title);
+            confirmation = (TextView) dialogView.findViewById(R.id.confirm);
+            confirmation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (customDialog != null) {
+                        customDialog.dismiss();
+                    }
+                    if(closeApp){
+                        finishAffinity();
+                    }
+                }
+            });
+            CommonMethods.setFontRegular(confirmation);
+            customDialog = builder.create();
+            customDialog.setCanceledOnTouchOutside(false);
+            customDialog.show();
+            customDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    customDialog = null;
+                }
+            });
+        } catch (Exception ex) {
+            Log.e(TAG, ex.toString());
         }
     }
 

@@ -6,97 +6,104 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     tools:context=".ui.SearchHomeActivity">
-
     <RelativeLayout
-        android:id="@+id/header"
+        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="55dp">
-        <ImageView
-            android:id="@+id/location_pin"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:padding="10dp"
-            android:layout_marginLeft="3dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true"
-            android:contentDescription="@string/app_name"
-            android:src="@mipmap/ic_generic_red_thick"/>
-        <TextView
-            android:id="@+id/current_location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/grey_text_color"
-            android:maxLines="1"
-            android:layout_marginRight="10dp"
-            android:ellipsize="end"
-            android:layout_toRightOf="@id/location_pin"
-            android:layout_centerVertical="true"
-            android:textSize="@dimen/large_text_size"/>
-
-    </RelativeLayout>
-    <RelativeLayout
-        android:id="@+id/search_container"
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginLeft="15dp"
-        android:focusableInTouchMode="true"
-        android:background="@drawable/rounded_corner_bg"
-        android:layout_below="@+id/header">
-        <ImageView
-            android:id="@+id/search"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            android:padding="15dp"
-            android:src="@drawable/ic_search"
-            android:layout_alignParentLeft="true"/>
-
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/search_edit"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:backgroundTint="@color/transparent"
-            android:layout_toRightOf="@+id/search"
-            android:hint="@string/search_hint_text"
-            android:layout_toLeftOf="@+id/location_cancel_container"
-            android:textColorHint="@color/grey_hint_color"
-            android:paddingLeft="5dp"
-            android:layout_centerVertical="true"/>
+        android:layout_height="wrap_content">
         <RelativeLayout
-            android:id="@+id/location_cancel_container"
-            android:layout_width="55dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true">
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="55dp">
             <ImageView
-                android:id="@+id/location_search"
+                android:id="@+id/location_pin"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="10dp"
+                android:layout_marginLeft="3dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:contentDescription="@string/app_name"
+                android:src="@mipmap/ic_generic_red_thick"/>
+            <TextView
+                android:id="@+id/current_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/grey_text_color"
+                android:maxLines="1"
+                android:layout_marginRight="10dp"
+                android:ellipsize="end"
+                android:layout_toRightOf="@id/location_pin"
+                android:layout_centerVertical="true"
+                android:textSize="@dimen/large_text_size"/>
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/search_container"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"
+            android:focusableInTouchMode="true"
+            android:background="@drawable/rounded_corner_bg"
+            android:layout_below="@+id/header">
+            <ImageView
+                android:id="@+id/search"
                 android:layout_width="55dp"
                 android:layout_height="55dp"
                 android:padding="15dp"
-                android:background="@drawable/search_ripple_drawable"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/ic_location_searching"
-                />
-            <ImageView
-                android:id="@+id/cancel"
+                android:src="@drawable/ic_search"
+                android:layout_alignParentLeft="true"/>
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/search_edit"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:backgroundTint="@color/transparent"
+                android:layout_toRightOf="@+id/search"
+                android:hint="@string/search_hint_text"
+                android:layout_toLeftOf="@+id/location_cancel_container"
+                android:textColorHint="@color/grey_hint_color"
+                android:paddingLeft="5dp"
+                android:layout_centerVertical="true"/>
+            <RelativeLayout
+                android:id="@+id/location_cancel_container"
                 android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:padding="18dp"
-                android:src="@drawable/ic_close"
-                android:visibility="gone"
-                android:background="@drawable/search_ripple_drawable"
-                android:contentDescription="@string/app_name"
-                />
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true">
+                <ImageView
+                    android:id="@+id/location_search"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:padding="15dp"
+                    android:background="@drawable/search_ripple_drawable"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/ic_location_searching"
+                    />
+                <ImageView
+                    android:id="@+id/cancel"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:padding="18dp"
+                    android:src="@drawable/ic_close"
+                    android:visibility="gone"
+                    android:background="@drawable/search_ripple_drawable"
+                    android:contentDescription="@string/app_name"
+                    />
+
+            </RelativeLayout>
+
 
         </RelativeLayout>
 
-
     </RelativeLayout>
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/restaurant_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="15dp"
-        android:layout_below="@+id/search_container">
+        android:layout_below="@+id/container">
     </androidx.recyclerview.widget.RecyclerView>
     <fr.castorflex.android.circularprogressbar.CircularProgressBar
         android:id="@+id/loader"
@@ -111,5 +118,16 @@
         app:cpb_rotation_speed="1.0"
         app:cpb_stroke_width="2dp"
         app:cpb_sweep_speed="1.0"/>
+    <TextView
+        android:id="@+id/error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/grey_text_color"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:visibility="gone"
+        android:text="@string/no_message_found"
+        android:layout_centerInParent="true"
+        android:textSize="@dimen/large_text_size"/>
 
 </RelativeLayout>

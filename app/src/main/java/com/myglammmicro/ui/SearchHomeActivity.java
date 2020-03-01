@@ -2,6 +2,7 @@ package com.myglammmicro.ui;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -20,6 +22,7 @@ import android.os.ResultReceiver;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -82,7 +85,12 @@ public class SearchHomeActivity extends AppCompatActivity implements GoogleApiCl
         try {
             getIntentData();
             initializeActivityControl();
-            fetchRestaurantByUserLocation(lat,lon);
+            if(CommonMethods.isNetworkAvailable(SearchHomeActivity.this)){
+                fetchRestaurantByUserLocation(lat,lon);
+            }else {
+                showCustomDialog(getString(R.string.no_internet),true);
+            }
+
         }catch (Exception ex){
             Log.e(TAG,ex.getMessage());
         }
@@ -138,17 +146,27 @@ public class SearchHomeActivity extends AppCompatActivity implements GoogleApiCl
                 @Override
                 public void afterTextChanged(Editable s) {
                     try {
-                        if(s.length()>0){
+                        if(s.toString().trim().length()>0){
                             showCloseButton();
                             hideSearchLocation();
-                            fetchRestaurantBySearchLocation(s.toString());
+                            if(CommonMethods.isNetworkAvailable(SearchHomeActivity.this)){
+                                fetchRestaurantBySearchLocation(s.toString());
+                            }else {
+                                showCustomDialog(getString(R.string.no_internet),false);
+                            }
+
                         }else {
                             hideCloseButton();
                             showSearchLocation();
                             if(lat!=0&&lon!=0){
-                                fetchRestaurantByUserLocation(lat,lon);
-                            }else{
+                                if(CommonMethods.isNetworkAvailable(SearchHomeActivity.this)){
+                                    fetchRestaurantByUserLocation(lat,lon);
+                                }else {
+                                    showCustomDialog(getString(R.string.no_internet),false);
+                                }
 
+                            }else{
+                                showCustomDialog(getString(R.string.api_failed_error),false);
                             }
                         }
                     }catch (Exception ex){
@@ -266,7 +284,13 @@ public class SearchHomeActivity extends AppCompatActivity implements GoogleApiCl
                         try{
                             if(restaurants!=null){
                                 hideProgressbar();
-                                initializeRecyclerView((ArrayList<Restaurants>)restaurants);
+                                hideNoResultFound();
+                                if(restaurants.size()>0){
+                                    initializeRecyclerView((ArrayList<Restaurants>)restaurants);
+                                }else {
+                                    showNoResultFound();
+                                }
+
                             }
                         }catch (Exception ex){
                             Log.e(TAG,ex.getMessage());
@@ -291,7 +315,12 @@ public class SearchHomeActivity extends AppCompatActivity implements GoogleApiCl
                     try{
                         if(restaurants!=null){
                             hideProgressbar();
-                            initializeRecyclerView((ArrayList<Restaurants>)restaurants);
+                            hideNoResultFound();
+                            if(restaurants.size()>0){
+                                initializeRecyclerView((ArrayList<Restaurants>)restaurants);
+                            }else {
+                                showNoResultFound();
+                            }
                         }
 
                     }catch (Exception ex){
@@ -368,16 +397,21 @@ public class SearchHomeActivity extends AppCompatActivity implements GoogleApiCl
     }
     private void getLastKnownLocation(){
         try{
-            fusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            if (location != null) {
-                                getLocationFromLatLng(location);
-                                fetchRestaurantByUserLocation(location.getLatitude(),location.getLongitude());
+            if(CommonMethods.isNetworkAvailable(SearchHomeActivity.this)){
+                fusedLocationClient.getLastLocation()
+                        .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(Location location) {
+                                if (location != null) {
+                                    getLocationFromLatLng(location);
+                                    fetchRestaurantByUserLocation(location.getLatitude(),location.getLongitude());
+                                }
                             }
-                        }
-                    });
+                        });
+            }else {
+               showCustomDialog(getString(R.string.no_internet),false);
+            }
+
         }catch (Exception ex){
             Log.e(TAG,ex.getMessage());
         }
@@ -539,6 +573,72 @@ public class SearchHomeActivity extends AppCompatActivity implements GoogleApiCl
                 locationSearch.setVisibility(View.GONE);
             }
 
+        }catch (Exception ex){
+            Log.e(TAG,ex.getMessage());
+        }
+    }
+    private AlertDialog customDialog;
+
+    private void showCustomDialog(String message, final boolean closeApp) {
+        final TextView title, confirmation;
+
+        try {
+            if (customDialog != null && customDialog.isShowing()) {
+                return;
+            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyAlertDialogStyle);
+            LayoutInflater inflater = this.getLayoutInflater();
+            final View dialogView = inflater.inflate(R.layout.general_message_dialog, null);
+            builder.setView(dialogView);
+            title = (TextView) dialogView.findViewById(R.id.message);
+            title.setText(message);
+            CommonMethods.setFontMedium(title);
+            confirmation = (TextView) dialogView.findViewById(R.id.confirm);
+            confirmation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (customDialog != null) {
+                        customDialog.dismiss();
+                    }
+                    if(closeApp){
+                        finishAffinity();
+                    }
+                }
+            });
+            CommonMethods.setFontRegular(confirmation);
+            customDialog = builder.create();
+            customDialog.setCanceledOnTouchOutside(false);
+            customDialog.show();
+            customDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    customDialog = null;
+                }
+            });
+        } catch (Exception ex) {
+            Log.e(TAG, ex.toString());
+        }
+    }
+    private void showNoResultFound(){
+        TextView error;
+        try{
+            error=(TextView)findViewById(R.id.error);
+            CommonMethods.setFontBold(error);
+            if(error.getVisibility()!=View.VISIBLE){
+                error.setVisibility(View.VISIBLE);
+            }
+        }catch (Exception ex){
+            Log.e(TAG,ex.getMessage());
+        }
+    }
+    private void hideNoResultFound(){
+        TextView error;
+        try{
+            error=(TextView)findViewById(R.id.error);
+            CommonMethods.setFontBold(error);
+            if(error.getVisibility()==View.VISIBLE){
+                error.setVisibility(View.GONE);
+            }
         }catch (Exception ex){
             Log.e(TAG,ex.getMessage());
         }

@@ -9,5 +9,6 @@
     <color name="grey_border_color">#757575</color>
     <color name="grey_hint_color">#BDBDBD</color>
     <color name="transparent">#00000000</color>
+    <color name="light_grey">#D8D8D8</color>
 
 </resources>
