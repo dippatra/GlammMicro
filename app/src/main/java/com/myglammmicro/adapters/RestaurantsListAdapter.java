@@ -13,8 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
+
 import com.myglammmicro.R;
 import com.myglammmicro.models.Restaurants;
 import com.myglammmicro.utils.CommonMethods;
@@ -44,13 +43,6 @@ public class RestaurantsListAdapter extends   RecyclerView.Adapter<RestaurantsLi
         Restaurants res;
         try{
             res=restaurants.get(position);
-           /* if (!res.getResCoverUrl().equalsIgnoreCase("")) {
-                Glide.with(context)
-                        .load(res.getResCoverUrl())
-                        .apply(new RequestOptions().placeholder(R.drawable.defaultimage).error(R.drawable.defaultimage))
-                        .into(holder.restaurantPhoto);
-
-            }*/
             holder.resName.setText(res.getResName());
             holder.resName.setSelected(true);
             CommonMethods.setFontBold(holder.resName);
